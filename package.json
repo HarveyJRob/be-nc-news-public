@@ -2,11 +2,14 @@
   "name": "be-nc-news",
   "version": "1.0.0",
   "description": "bc-nc-news",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest"
+    "view-dbs-dev": "psql -f ./db/view-db-dev.sql > ./db/view-db-dev.txt",
+    "view-dbs-test": "psql -f ./db/view-db-test.sql > ./db/view-db-test.txt",
+    "test": "jest",
+    "dev": "node ./db/seeds/run-seed.js && nodemon listen.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +22,24 @@
     "url": "https://github.com/northcoders/be-nc-news/issues"
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "dotenv": "^12.0.3",
+    "express": "^4.17.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.7.1",
+    "pg-format": "^1.0.4",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "jest-sorted": "^1.0.14",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-sorted"
+    ]
+  }
 }
