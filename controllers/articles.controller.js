@@ -1,17 +1,15 @@
 const {
   selectArticles,
   insertArticle,
-  selectArticlesPagination,
   selectArticleByArticleId,
   updateArticleByArticleId,
   removeArticleByArticleId,
   selectCommentsByArticleId,
-  selectCommentsByArticleIdPagination,
   insertCommentByArticleId,
   removeCommentsByArticleId,
 } = require("../models/articles.model");
 
-const { checkExists } = require("../utils/utils");
+const { checkExists, addPagination, checkTopic } = require("../utils/utils");
 
 exports.checkArticleIdExists = function (req, res, next, id) {
   return checkExists("articles", "article_id", id)
@@ -24,19 +22,13 @@ exports.checkArticleIdExists = function (req, res, next, id) {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by, order, topic } = req.query;
-  selectArticles(sort_by, order, topic)
-    .then((articles) => {
-      res.status(200).send({ articles });
+  const { sort_by, order, topic, limit = 10, p = 1 } = req.query;
+  checkTopic(topic)
+    .then((topics) => {
+      return selectArticles(sort_by, order, topic);
     })
-    .catch((err) => next(err));
-};
-
-exports.getArticlesPagination = (req, res, next) => {
-  const { sort_by, order, topic, limit, p } = req.query;
-  selectArticlesPagination(sort_by, order, limit, p, topic)
     .then((articles) => {
-      res.status(200).send(articles);
+      res.status(200).send(addPagination("articles", articles, limit, p));
     })
     .catch((err) => next(err));
 };
@@ -80,19 +72,10 @@ exports.deleteArticleByArticleId = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit = 10, p = 1 } = req.query;
   selectCommentsByArticleId(article_id)
     .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch((err) => next(err));
-};
-
-exports.getCommentsByArticleIdPagination = (req, res, next) => {
-  const { article_id } = req.params;
-  const { limit, p } = req.query;
-  selectCommentsByArticleIdPagination(article_id, limit, p)
-    .then((comments) => {
-      res.status(200).send(comments);
+      res.status(200).send(addPagination("comments", comments, limit, p));
     })
     .catch((err) => next(err));
 };

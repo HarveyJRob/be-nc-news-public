@@ -32,7 +32,7 @@ const errorLogRFStream = rfs.createStream("error.log", {
 // setup the logger for dev mode only:
 const ENV = process.env.NODE_ENV || "dev";
 if (ENV === "dev") {
-  // log errors to the console.
+  // log errors to console.
   app.use(
     morgan("combined", {
       skip: function (req, res) {
@@ -41,8 +41,7 @@ if (ENV === "dev") {
     })
   );
 
-  app.use(morgan("dev", { stream: accessLogRFStream }));
-
+  // Log errors to file
   app.use(
     morgan("combined", {
       stream: errorLogRFStream,
@@ -51,6 +50,8 @@ if (ENV === "dev") {
       },
     })
   );
+  // Log access to file
+  app.use(morgan("dev", { stream: accessLogRFStream }));
 }
 
 // Error-handling functions
@@ -70,11 +71,12 @@ const usersRouter = require("./routers/users.router");
 //parse req.body
 app.use(express.json());
 
+// I'm alive endpoint - replace with a static version of swagger
 app.get("/api", (req, res, next) => {
   res.status(200).send({ msg: "all ok" });
 });
 
-// Mount-points
+// Router mount-points
 app.use("/api/topics", topicsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/articles", articlesRouter);

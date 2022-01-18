@@ -5,16 +5,16 @@ info:
   version: 1.0.0
   contact:
     name: Rob Harvey
-    email: add@email.org
-    url: https://www.addwebsite.org
-  license:
-    name: Apache 2.0
-    url: "http://apache.org/"
+    # email: add@email.org
+    # url: https://www.addwebsite.org
+  # license:
+  #   name: Apache 2.0
+  #   url: "http://apache.org/"
   servers:
     -url: "http://localhost:9090/"
     description: This is my local server
-    #-url: "http://company.com/"
-    #description: This is my company server
+    # -url: "http://company.com/"
+    # description: This is my company server
 
 schemes: [http, https]
 

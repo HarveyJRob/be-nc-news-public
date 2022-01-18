@@ -271,7 +271,7 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("DELETE: status 204 & deleted article object", () => {
+  test("DELETE: status 204 & no content", () => {
     return request(app).delete("/api/articles/10").expect(204);
   });
   test("DELETE: status 404 & returns an error message", () => {
@@ -298,8 +298,9 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -322,8 +323,9 @@ describe("/api/articles", () => {
       .get("/api/articles?order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -334,8 +336,9 @@ describe("/api/articles", () => {
       .get("/api/articles?order=ASC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("created_at", {
           descending: false,
         });
@@ -346,8 +349,9 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=title&&order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("title", {
           descending: true,
         });
@@ -358,8 +362,9 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=body&&order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("body", {
           descending: true,
         });
@@ -370,8 +375,9 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=votes&&order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("votes", {
           descending: true,
         });
@@ -382,8 +388,9 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=topic&&order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("topic", {
           descending: true,
         });
@@ -394,8 +401,9 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=author&&order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("author", {
           descending: true,
         });
@@ -406,8 +414,9 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=created_at&&order=DESC")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(12);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(12);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -430,8 +439,9 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(11);
         expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(11);
+        expect(res.body.articles).toHaveLength(10);
         expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -447,6 +457,14 @@ describe("/api/articles", () => {
         expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
+      });
+  });
+  test("GET: status 400 & returns an error message - topic not in db (case insensitive)", () => {
+    return request(app)
+      .get("/api/articles?topic=unknown_topic")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
       });
   });
   test("GET: status 400 & returns an error message - not allowed sort_by", () => {
@@ -467,63 +485,59 @@ describe("/api/articles", () => {
   });
 });
 
-// Pagination start
-
-describe("/api/articles/pagination", () => {
+describe("/api/articles", () => {
   test("GET: status 200 & object with total_count, page, pageCount and post properties sorted by defaults (created_at DESC)", () => {
     return request(app)
-      .get("/api/articles/pagination")
+      .get("/api/articles")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
           total_count: 12,
           page: 1,
           pageCount: 2,
-          posts: expect.any(Array),
+          articles: expect.any(Array),
         });
-        expect(res.body.posts).toHaveLength(10);
-        expect(res.body.posts).toBeSortedBy("created_at", {
+        expect(res.body.articles).toHaveLength(10);
+        expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
       });
   });
   test("GET: status 200 & object with total_count, page, pageCount and post properties sorted by defaults (created_at DESC)", () => {
     return request(app)
-      .get("/api/articles/pagination?limit=5")
+      .get("/api/articles?limit=5")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
           total_count: 12,
           page: 1,
           pageCount: 3,
-          posts: expect.any(Array),
+          articles: expect.any(Array),
         });
-        expect(res.body.posts).toHaveLength(5);
-        expect(res.body.posts).toBeSortedBy("created_at", {
+        expect(res.body.articles).toHaveLength(5);
+        expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
       });
   });
   test("GET: status 200 & object with total_count, page, pageCount and post properties sorted by defaults (created_at DESC)", () => {
     return request(app)
-      .get("/api/articles/pagination?limit=5&&p=2")
+      .get("/api/articles?limit=5&&p=2")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
           total_count: 12,
           page: 2,
           pageCount: 3,
-          posts: expect.any(Array),
+          articles: expect.any(Array),
         });
-        expect(res.body.posts).toHaveLength(5);
-        expect(res.body.posts).toBeSortedBy("created_at", {
+        expect(res.body.articles).toHaveLength(5);
+        expect(res.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
       });
   });
 });
-
-// Pagination end
 
 describe("/api/articles", () => {
   test("POST: status 201 & returns new article object", () => {
@@ -622,8 +636,9 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then((res) => {
+        expect(res.body.total_count).toBe(11);
         expect(res.body.comments).toBeInstanceOf(Array);
-        expect(res.body.comments).toHaveLength(11);
+        expect(res.body.comments).toHaveLength(10);
         res.body.comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -653,70 +668,50 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
-// Pagination start
-
-describe("/api/articles/:article_id/comments/pagination", () => {
+describe("/api/articles/:article_id/comments", () => {
   test("GET: status 200 & object with total_count, page, pageCount and post properties", () => {
     return request(app)
-      .get("/api/articles/1/comments/pagination")
+      .get("/api/articles/1/comments")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
           total_count: 11,
           page: 1,
           pageCount: 2,
-          posts: expect.any(Array),
+          comments: expect.any(Array),
         });
-        expect(res.body.posts).toHaveLength(10);
+        expect(res.body.comments).toHaveLength(10);
       });
   });
   test("GET: status 200 & object with total_count, page, pageCount and post properties", () => {
     return request(app)
-      .get("/api/articles/1/comments/pagination?limit=5")
+      .get("/api/articles/1/comments?limit=5")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
           total_count: 11,
           page: 1,
           pageCount: 3,
-          posts: expect.any(Array),
+          comments: expect.any(Array),
         });
-        expect(res.body.posts).toHaveLength(5);
+        expect(res.body.comments).toHaveLength(5);
       });
   });
   test("GET: status 200 & object with total_count, page, pageCount and post properties sorted by defaults (created_at DESC)", () => {
     return request(app)
-      .get("/api/articles/1/comments/pagination?limit=5&&p=2")
+      .get("/api/articles/1/comments?limit=5&&p=2")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
           total_count: 11,
           page: 2,
           pageCount: 3,
-          posts: expect.any(Array),
+          comments: expect.any(Array),
         });
-        expect(res.body.posts).toHaveLength(5);
-      });
-  });
-  test("GET: status 404 & returns an error message", () => {
-    return request(app)
-      .get("/api/articles/1000/comments/pagination")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Not found");
-      });
-  });
-  test("GET: status 400 & returns an error message", () => {
-    return request(app)
-      .get("/api/articles/invalid_id/comments/pagination")
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
+        expect(res.body.comments).toHaveLength(5);
       });
   });
 });
-
-// Pagination end
 
 describe("/api/articles/:article_id/comments", () => {
   test("POST: status 201 & returns new comment object", () => {
@@ -797,7 +792,7 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  test("DELETE: status 200 & requested array of deleted comment objects", () => {
+  test("DELETE: status 204 & array of deleted comment objects", () => {
     return request(app)
       .delete("/api/articles/5/comments")
       .expect(200)
@@ -830,20 +825,8 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe("/api/comments/:comment_id", () => {
-  test("DELETE: status 200 & deleted comment objects", () => {
-    return request(app)
-      .delete("/api/comments/1")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.comment).toMatchObject({
-          comment_id: 1,
-          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-          votes: 16,
-          author: "butter_bridge",
-          article_id: 9,
-          created_at: "2020-04-05T23:00:00.000Z",
-        });
-      });
+  test("DELETE: status 204 & no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
   });
   test("DELETE: status 404 & returns an error message", () => {
     return request(app)
@@ -862,8 +845,6 @@ describe("/api/comments/:comment_id", () => {
       });
   });
 });
-
-// TEST NEED UPDATING
 
 describe("/api/comments/:comment_id", () => {
   test("PATCH: status 200 & positive updated to comment vote property", () => {

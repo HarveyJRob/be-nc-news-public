@@ -1,8 +1,6 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 
-const { addPagination } = require("../utils/utils");
-
 exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const allowedSortBys = ["title", "body", "votes", "topic", "author", "created_at"];
   const allowedOrderBys = ["ASC", "DESC"];
@@ -17,7 +15,7 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
     LEFT OUTER JOIN comments ON articles.article_id = comments.article_id`;
 
   if (topic) {
-    queryValues.push(`%${topic}%`);
+    queryValues.push(topic);
     sqlStr += ` WHERE topic ILIKE %L`;
   }
 
@@ -54,67 +52,6 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const queryStr = format(sqlStr, ...queryValues);
   return db.query(queryStr).then((results) => {
     return results.rows;
-  });
-};
-
-exports.selectArticlesPagination = (
-  sort_by = "created_at",
-  order = "DESC",
-  limit = 10,
-  p = 1,
-  topic
-) => {
-  const allowedSortBys = ["title", "body", "votes", "topic", "author", "created_at"];
-  const allowedOrderBys = ["ASC", "DESC"];
-
-  if (!allowedSortBys.includes(sort_by) || !allowedOrderBys.includes(order)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
-  let queryValues = [];
-  let sqlStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
-    FROM articles
-    LEFT OUTER JOIN comments ON articles.article_id = comments.article_id`;
-
-  if (topic) {
-    queryValues.push(`%${topic}%`);
-    sqlStr += ` WHERE topic ILIKE %L`;
-  }
-
-  sqlStr += ` GROUP BY articles.article_id`;
-
-  if (sort_by === "title") {
-    queryValues.push(`title`);
-    sqlStr += ` ORDER BY %I`;
-  } else if (sort_by === "body") {
-    queryValues.push(`body`);
-    sqlStr += ` ORDER BY %I`;
-  } else if (sort_by === "votes") {
-    queryValues.push(`votes`);
-    sqlStr += ` ORDER BY %I`;
-  } else if (sort_by === "topic") {
-    queryValues.push(`topic`);
-    sqlStr += ` ORDER BY %I`;
-  } else if (sort_by === "author") {
-    queryValues.push(`author`);
-    sqlStr += ` ORDER BY %I`;
-  } else if (sort_by === "created_at") {
-    queryValues.push(`created_at`);
-    sqlStr += ` ORDER BY %I`;
-  }
-
-  if (order === "ASC") {
-    queryValues.push(`ASC`);
-    sqlStr += ` %s`;
-  } else if (order === "DESC") {
-    queryValues.push(`DESC`);
-    sqlStr += ` %s`;
-  }
-
-  const queryStr = format(sqlStr, ...queryValues);
-  return db.query(queryStr).then((results) => {
-    const articles = addPagination(results, limit, p);
-    return articles;
   });
 };
 
@@ -209,20 +146,6 @@ exports.selectCommentsByArticleId = (article_id) => {
 
   return db.query(queryStr).then((results) => {
     return results.rows;
-  });
-};
-
-exports.selectCommentsByArticleIdPagination = (article_id, limit = 10, p = 1) => {
-  let queryValues = [article_id];
-  let sqlStr = `SELECT comments.*
-                FROM comments 
-                WHERE comments.article_id = %L`;
-
-  const queryStr = format(sqlStr, ...queryValues);
-
-  return db.query(queryStr).then((results) => {
-    const articles = addPagination(results, limit, p);
-    return articles;
   });
 };
 
