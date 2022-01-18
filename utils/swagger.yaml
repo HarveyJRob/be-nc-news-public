@@ -1,0 +1,174 @@
+swagger: "2.0"
+info:
+  title: be-nc-news
+  description: Northcoders Portfolio Project for Backend Module
+  version: 1.0.0
+  contact:
+    name: Rob Harvey
+    email: add@email.org
+    url: https://www.addwebsite.org
+  license:
+    name: Apache 2.0
+    url: "http://apache.org/"
+  servers:
+    -url: "http://localhost:9090/"
+    description: This is my local server
+    #-url: "http://company.com/"
+    #description: This is my company server
+
+schemes: [http, https]
+
+paths:
+  /api:
+    get:
+      summary: Checking the api is working
+      description: Returns an object with property msg value all ok
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+            example: { msg: "all ok" }
+
+  /api/users:
+    get:
+      summary: All users
+      description: Returns an object with property users containing an array of usernames
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/components/schemas/Users"
+
+  /api/users/{username}:
+    get:
+      summary: A user
+      description: Returns an object with property users containing an object with users details
+      parameters:
+        - name: username
+          in: path
+          required: true
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              users:
+                schema:
+                  $ref: "#/components/schemas/Users"
+            example:
+              { users: { username: tickle122, avatar_url: link.to.image, name: Paul Grumpy } }
+        400:
+          description: Bad request - invalid username
+        404:
+          description: Not found - non-existent username
+
+  /api/topics:
+    get:
+      summary: All topics
+      description: Returns an object with property topics containing an array of topics
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              topics:
+                type: array
+                properties:
+                  type: object
+                  properties:
+                    slug:
+                      type: string
+                    description:
+                      type: string
+            example:
+              {
+                topics:
+                  [
+                    { slug: coding, description: Code is love },
+                    { slug: football, description: Love footie },
+                  ],
+              }
+
+    post:
+      summary: Add a topic
+      description: Adds a topic and returns a copy of the new topic
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: topic
+          schema:
+            type: object
+            properties:
+              slug:
+                type: string
+              description:
+                type: string
+
+      responses:
+        201:
+          description: success
+          schema:
+            type: object
+            properties:
+              topic:
+                type: object
+                properties:
+                  slug:
+                    type: string
+                  description:
+                    type: string
+
+            example: { topic: { slug: new topic slug, description: new topic description } }
+
+  /api/articles:
+    get:
+      summary: All articles sorted and filtered
+      description: Returns an object with property articles containing an array of articles
+      parameters:
+        - in: query
+          name: sort_by
+          type: string
+          enum: [title, body, votes, topic, author, created_at]
+        - in: query
+          name: order
+          type: string
+          enum: [ASC, DESC]
+        - in: query
+          name: topic
+          type: string
+      responses:
+        200:
+          description: OK
+
+components:
+  schemas:
+    Users:
+      type: object
+      properties:
+        users:
+          type: array
+          properties:
+            type: object
+            properties:
+              username:
+                type: string
+      example: { users: [{ username: tickle122 }, { username: grumpy19 }] }
+
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        avatar_url:
+          type: string
+        name:
+          type: string

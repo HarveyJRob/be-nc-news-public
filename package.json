@@ -6,8 +6,8 @@
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "view-dbs-dev": "psql -f ./db/view-db-dev.sql > ./db/view-db-dev.txt",
-    "view-dbs-test": "psql -f ./db/view-db-test.sql > ./db/view-db-test.txt",
+    "view-dbs-dev": "psql -f ./db/views/view-db-dev.sql > ./db/view-db-dev.txt",
+    "view-dbs-test": "psql -f ./db/views/view-db-test.sql > ./db/view-db-test.txt",
     "test": "jest",
     "dev": "node ./db/seeds/run-seed.js && nodemon listen.js"
   },
@@ -28,8 +28,10 @@
     "morgan": "^1.10.0",
     "pg": "^8.7.1",
     "pg-format": "^1.0.4",
+    "rotating-file-stream": "^3.0.2",
     "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.3.0"
+    "swagger-ui-express": "^4.3.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "jest": "^27.4.7",
