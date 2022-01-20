@@ -37,6 +37,8 @@ paths:
     get:
       summary: All users
       description: Returns an object with property users containing an array of usernames
+      tags:
+        - users
       responses:
         200:
           description: Success
@@ -47,6 +49,8 @@ paths:
     get:
       summary: A user
       description: Returns an object with property users containing an object with users details
+      tags:
+        - users
       parameters:
         - name: username
           in: path
@@ -71,33 +75,19 @@ paths:
     get:
       summary: All topics
       description: Returns an object with property topics containing an array of topics
+      tags:
+        - topics
       responses:
         200:
           description: Success
           schema:
-            type: object
-            properties:
-              topics:
-                type: array
-                properties:
-                  type: object
-                  properties:
-                    slug:
-                      type: string
-                    description:
-                      type: string
-            example:
-              {
-                topics:
-                  [
-                    { slug: coding, description: Code is love },
-                    { slug: football, description: Love footie },
-                  ],
-              }
+            $ref: "#/components/schemas/Topics"
 
     post:
       summary: Add a topic
       description: Adds a topic and returns a copy of the new topic
+      tags:
+        - topics
       produces:
         - application/json
       consumes:
@@ -129,10 +119,81 @@ paths:
 
             example: { topic: { slug: new topic slug, description: new topic description } }
 
+  /api/comments/{comment_id}:
+    patch:
+      summary: Patch a comment by comment_id
+      description: Returns an object with property comment containing an object with updated comment details
+      tags:
+        - comments
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+        - in: body
+          required: true
+          name: comment
+          schema:
+            type: object
+            properties:
+              inc_votes:
+                type: integer
+                minimum: -100
+                maximum: 100
+                default: 1
+      responses:
+        200:
+          description: success
+          schema:
+            type: object
+            properties:
+              comment:
+                schema:
+                  $ref: "#/components/schemas/Comment"
+            example: { comment: { comment_id: 10, author: bigDave, article_id: 1, body: what a great article, votes: 100, created_at: 2020-09-23 } }
+        400:
+          description: Bad request - invalid comment_id
+        400:
+          description: Bad request - missing body parameter
+        404:
+          description: Not found - non-existent comment_id
+
+    delete:
+      summary: Delete a comment by comment_id
+      description: Returns status 204 and no body
+      tags:
+        - comments
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+      responses:
+        204:
+          description: Success
+        400:
+          description: Bad request - invalid comment_id
+        404:
+          description: Not found - non-existent comment_id
+
   /api/articles:
     get:
       summary: All articles sorted and filtered
       description: Returns an object with property articles containing an array of articles
+      tags:
+        - articles
       parameters:
         - in: query
           name: sort_by
@@ -149,6 +210,243 @@ paths:
         200:
           description: OK
 
+    post:
+      summary: All articles sorted and filtered
+      description: Returns an object with property articles containing an array of articles
+      tags:
+        - articles
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: article
+          schema:
+            $ref: "#/components/schemas/NewArticle"
+
+      responses:
+        201:
+          description: success
+          schema:
+            type: object
+            properties:
+              article:
+                schema:
+                  $ref: "#/components/schemas/Article"
+            example: { article: { article_id: 1, title: Running a node app, body: A two part series about stuff, votes: 10, topic: coding, author: jessjelly, created_at: 2020-11-07 } }
+        400:
+          description: Bad request - missing body parameter
+
+  /api/articles/{article_id}:
+    get:
+      summary: An article by article_id
+      description: Returns an object with property article containing an object with article details
+      tags:
+        - articles
+      parameters:
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              $ref: "#/components/schemas/Article"
+            example: { article: { article_id: 1, title: Coding 101, body: Learn useful stuff all about coding, votes: 21, topic: coding, author: jessjelly, created_at: 2020-11-07 } }
+        400:
+          description: Bad request - invalid article_id
+        404:
+          description: Not found - non-existent article_id
+
+    patch:
+      summary: Patch an article by article_id
+      description: Returns an object with property article containing an object with updated article details
+      tags:
+        - articles
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+        - in: body
+          required: true
+          name: article
+          schema:
+            type: object
+            properties:
+              inc_votes:
+                type: integer
+                minimum: -100
+                maximum: 100
+                default: 1
+      responses:
+        200:
+          description: success
+          schema:
+            type: object
+            properties:
+              article:
+                schema:
+                  $ref: "#/components/schemas/Article"
+            example: { article: { article_id: 1, title: Coding 101, body: Learn useful stuff all about coding, votes: 21, topic: coding, author: jessjelly, created_at: 2020-11-07 } }
+        400:
+          description: Bad request - invalid article_id
+        400:
+          description: Bad request - missing body parameter
+        404:
+          description: Not found - non-existent article_id
+
+    delete:
+      summary: Delete an article by article_id
+      description: Returns status 204 and no body
+      tags:
+        - articles
+      parameters:
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+      responses:
+        204:
+          description: Success
+        400:
+          description: Bad request - invalid article_id
+        404:
+          description: Not found - non-existent article_id
+
+  /api/articles/{article_id}/comments:
+    get:
+      summary: Comments related to an article
+      description: Returns a paginated object. Under the comments property contains an array of comments related to the article
+      tags:
+        - articles
+        - comments
+      parameters:
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              total_count:
+                type: integer
+              page:
+                type: integer
+              pageCount:
+                type: integer
+              comments:
+                type: array
+                properties:
+                  schema:
+                    $ref: "#/components/schemas/Comment"
+            example:
+              { total_count: 11, page: 1, pageCount: 2, comments: [{ comment_id: 10, author: bigDave, article_id: 1, body: what a great article, votes: 100, created_at: 2020-09-23 }, ] }
+        400:
+          description: Bad request - invalid article_id
+        404:
+          description: Not found - non-existent article_id
+
+    post:
+      summary: Post a comments related to an article
+      description: Returns an object with property comment containing the posted comment object
+      tags:
+        - articles
+        - comments
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+        - in: body
+          name: comment
+          schema:
+            $ref: "#/components/schemas/NewComment"
+      responses:
+        201:
+          description: success
+          schema:
+            type: object
+            properties:
+              comment:
+                schema:
+                  $ref: "#/components/schemas/Comment"
+            example: { comment: { comment_id: 10, author: bigDave, article_id: 1, body: what a great article, votes: 100, created_at: 2020-09-23 } }
+        400:
+          description: Bad request - invalid article_id
+        400:
+          description: Bad request - missing body parameter
+        404:
+          description: Not found - non-existent article_id
+
+    delete:
+      summary: Delete all comments related to an article
+      description: Returns status 204 and no body
+      tags:
+        - articles
+        - comments
+      parameters:
+        - name: article_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 1
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              comments:
+                type: array
+                properties:
+                  schema:
+                    $ref: "#/components/schemas/Comment"
+            example:
+              { comments: [{ comment_id: 10, author: bigDave, article_id: 1, body: what a great article, votes: 100, created_at: 2020-09-23 }, ] }
+        400:
+          description: Bad request - invalid article_id
+        404:
+          description: Not found - non-existent article_id
+        
 components:
   schemas:
     Users:
@@ -163,6 +461,29 @@ components:
                 type: string
       example: { users: [{ username: tickle122 }, { username: grumpy19 }] }
 
+    Topic:
+      type: object
+      properties:
+        slug:
+          type: string
+        description:
+          type: string
+
+    Topics:
+      type: object
+      properties:
+        topics:
+          schema:
+            $ref: "#/components/schemas/Topic"
+      example:
+              {
+                topics:
+                  [
+                    { slug: coding, description: Code is love },
+                    { slug: football, description: Love footie },
+                  ],
+              }
+
     User:
       type: object
       properties:
@@ -171,4 +492,60 @@ components:
         avatar_url:
           type: string
         name:
+          type: string
+
+    Comment:
+      type: object
+      properties:
+        comment_id:
+          type: integer
+        author:
+          type: string
+        article_id:
+          type: integer
+        body:
+          type: string
+        votes:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+    
+    NewComment:
+      type: object
+      properties:
+        username:
+          type: string
+        body:
+          type: string
+
+    Article:
+      type: object
+      properties:
+        article_id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        votes:
+          type: integer
+        topic:
+          type: string
+        author:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    NewArticle:
+      type: object
+      properties:
+        title:
+          type: string
+        body:
+          type: string
+        topic:
+          type: string
+        author:
           type: string
