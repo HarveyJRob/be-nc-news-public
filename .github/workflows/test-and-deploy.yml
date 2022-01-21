@@ -1,6 +1,4 @@
 name: Test and deploy
-version: 1.0.0
-description: "CI CD example"
 
 # when action runs
 on:
