@@ -1,0 +1,53 @@
+name: Test and deploy
+version: 1.0.0
+description: "CI CD example"
+
+# when action runs
+on:
+  push:
+    branches:
+      - main
+
+# what to do
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: say hi
+        run: echo "hello from CLI"
+
+      - name: say bye
+        run: echo "goodbye from CLI"
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout and clone repo
+        uses: actions/checkout@v2
+
+      - name: setup postgres
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: nc_news_test
+          postgresql user: test_user
+          postgresql password: test_password
+
+      - name: install dependencies
+        run: npm i
+
+      - name: run all tests
+        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm t
+
+deploy:
+  runs-on: ubuntu-latest
+  needs: test
+  steps:
+    - name: checkout and clone repo
+      uses: actions/checkout@v2
+    
+    - name: deploy to heroku
+      uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}} #Must be unique in Heroku
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
