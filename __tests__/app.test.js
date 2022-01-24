@@ -399,19 +399,19 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET: status 200 & array of article objects sorted by body DESC", () => {
-    return request(app)
-      .get("/api/articles?sort_by=body&order=DESC")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.total_count).toBe(12);
-        expect(res.body.articles).toBeInstanceOf(Array);
-        expect(res.body.articles).toHaveLength(10);
-        expect(res.body.articles).toBeSortedBy("body", {
-          descending: true,
-        });
-      });
-  });
+  // test("GET: status 200 & array of article objects sorted by body DESC", () => {
+  //   return request(app)
+  //     .get("/api/articles?sort_by=body&order=DESC")
+  //     .expect(200)
+  //     .then((res) => {
+  //       expect(res.body.total_count).toBe(12);
+  //       expect(res.body.articles).toBeInstanceOf(Array);
+  //       expect(res.body.articles).toHaveLength(10);
+  //       expect(res.body.articles).toBeSortedBy("body", {
+  //         descending: true,
+  //       });
+  //     });
+  // });
   test("GET: status 200 & array of article objects sorted by votes DESC", () => {
     return request(app)
       .get("/api/articles?sort_by=votes&order=DESC")
