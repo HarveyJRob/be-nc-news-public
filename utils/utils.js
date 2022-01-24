@@ -24,7 +24,7 @@ const checkTopic = (topic) => {
       topic &&
       !topics.rows.find((element) => element.slug.toLowerCase() === topic.toLowerCase())
     ) {
-      return Promise.reject({ status: 400, msg: "Bad request" });
+      return Promise.reject({ status: 404, msg: "Not found" });
     } else {
       return topics.rows.map((element) => element.slug);
     }

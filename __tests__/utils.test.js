@@ -45,7 +45,7 @@ describe("checkTopic", () => {
     });
   });
   test("returns a rejected promise if provided argument doesn't exist in db", () => {
-    return expect(checkTopic("dogs")).rejects.toEqual({ status: 400, msg: "Bad request" });
+    return expect(checkTopic("dogs")).rejects.toEqual({ status: 404, msg: "Not found" });
   });
 });
 

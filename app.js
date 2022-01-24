@@ -6,10 +6,6 @@ const app = express();
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerJsDocs = YAML.load("./utils/swagger.yaml");
-//const swaggerJsDocs = require("swagger-jsdoc");
-//const { swaggerOptions } = require("./utils/swagger");
-//const swaggerDocs = swaggerJsDocs(swaggerOptions);
-//app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, { explorer: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerJsDocs));
 
 //Morgan
@@ -20,12 +16,12 @@ var rfs = require("rotating-file-stream");
 
 //rotating write stream
 const accessLogRFStream = rfs.createStream("access.log", {
-  interval: "1d", // rotate daily
+  interval: "1d",
   path: path.join(__dirname, "logs"),
 });
 //rotating write stream
 const errorLogRFStream = rfs.createStream("error.log", {
-  interval: "1d", // rotate daily
+  interval: "1d",
   path: path.join(__dirname, "logs"),
 });
 

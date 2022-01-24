@@ -157,6 +157,22 @@ describe("/api/articles/:article_id", () => {
         });
       });
   });
+  test("GET: status 200 & requested article object inc comment_count where article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.article).toMatchObject({
+          article_id: 2,
+          title: "Sony Vaio; or, The Laptop",
+          topic: "mitch",
+          author: "icellusedkars",
+          votes: 0,
+          comment_count: "0",
+        });
+      });
+  });
+
   test("GET: status 404 & returns an error message", () => {
     return request(app)
       .get("/api/articles/1000")
@@ -331,9 +347,35 @@ describe("/api/articles", () => {
         });
       });
   });
+  test("GET: status 200 & array of article objects sorted by created_at desc", () => {
+    return request(app)
+      .get("/api/articles?order=desc")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.total_count).toBe(12);
+        expect(res.body.articles).toBeInstanceOf(Array);
+        expect(res.body.articles).toHaveLength(10);
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
   test("GET: status 200 & array of article objects sorted by created_at ASC", () => {
     return request(app)
       .get("/api/articles?order=ASC")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.total_count).toBe(12);
+        expect(res.body.articles).toBeInstanceOf(Array);
+        expect(res.body.articles).toHaveLength(10);
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: false,
+        });
+      });
+  });
+  test("GET: status 200 & array of article objects sorted by created_at asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -462,9 +504,9 @@ describe("/api/articles", () => {
   test("GET: status 400 & returns an error message - topic not in db (case insensitive)", () => {
     return request(app)
       .get("/api/articles?topic=unknown_topic")
-      .expect(400)
+      .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
+        expect(res.body.msg).toBe("Not found");
       });
   });
   test("GET: status 400 & returns an error message - not allowed sort_by", () => {
@@ -596,9 +638,25 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("POST: status 400 & returns an error message - non-existent author", () => {
+  test("POST: status 422 & returns an error message - valid but non-existent author", () => {
     const newArticle = {
-      author: "NON_EXISTENT",
+      author: "VALID_NON_EXISTENT",
+      title: "Test article by Lurker",
+      body: "This is a very exciting test article about cats.",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(422)
+      .then((res) => {
+        expect(res.body.msg).toBe("Unprocessable Entity");
+      });
+  });
+  test("POST: status 422 & returns an error message - invalid author", () => {
+    const newArticle = {
+      author: 8,
       title: "Test article by Lurker",
       body: "This is a very exciting test article about cats.",
       topic: "cats",
@@ -612,20 +670,20 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("POST: status 400 & returns an error message - non-existent topic", () => {
+  test("POST: status 400 & returns an error message - valid but non-existent topic", () => {
     const newArticle = {
       author: "lurker",
       title: "Test article by Lurker",
       body: "This is a very exciting test article about cats.",
-      topic: "NON_EXISTENT",
+      topic: "VALID_NON_EXISTENT",
     };
 
     return request(app)
       .post("/api/articles")
       .send(newArticle)
-      .expect(400)
+      .expect(422)
       .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
+        expect(res.body.msg).toBe("Unprocessable Entity");
       });
   });
 });

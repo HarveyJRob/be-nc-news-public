@@ -3,10 +3,16 @@ const format = require("pg-format");
 
 exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const allowedSortBys = ["title", "body", "votes", "topic", "author", "created_at"];
-  const allowedOrderBys = ["ASC", "DESC"];
+  const allowedOrderBys = ["ASC", "DESC", "asc", "desc", "Asc", "Desc"];
 
   if (!allowedSortBys.includes(sort_by) || !allowedOrderBys.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  if (["ASC", "asc", "Asc"].includes(order)) {
+    order = "ASC";
+  } else if (["DESC", "desc", "Desc"].includes(order)) {
+    order = "DESC";
   }
 
   let queryValues = [];
@@ -94,7 +100,7 @@ exports.selectArticleByArticleId = (article_id) => {
   let queryValues = [article_id];
   let sqlStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
                 FROM articles
-                JOIN comments ON articles.article_id = comments.article_id 
+                LEFT OUTER JOIN comments ON articles.article_id = comments.article_id 
                 WHERE articles.article_id = %L
                 GROUP BY articles.article_id;`;
 

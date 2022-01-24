@@ -14,7 +14,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res.status(400).send({ msg: "Bad request" });
   } else if (err.code === "23503") {
     // violates foreign key constraint for topics and authors in articles
-    res.status(400).send({ msg: "Bad request" });
+    res.status(422).send({ msg: "Unprocessable Entity" });
   } else {
     next(err);
   }
