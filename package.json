@@ -8,7 +8,7 @@
     "seed": "node ./db/seeds/run-seed.js",
     "view-dbs-dev": "psql -f ./db/views/view-db-dev.sql > ./db/view-db-dev.txt",
     "view-dbs-test": "psql -f ./db/views/view-db-test.sql > ./db/view-db-test.txt",
-    "test": "jest",
+    "test": "TZ=UTC jest",
     "dev": "node ./db/seeds/run-seed.js && nodemon listen.js",
     "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
     "start": "node listen.js"

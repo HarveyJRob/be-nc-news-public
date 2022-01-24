@@ -151,7 +151,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          created_at: "2020-07-08T23:00:00.000Z",
+          created_at: "2020-07-09T00:00:00.000Z",
           votes: 100,
           comment_count: "11",
         });
@@ -208,7 +208,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          created_at: "2020-07-08T23:00:00.000Z",
+          created_at: "2020-07-09T00:00:00.000Z",
           votes: 110,
         });
       });
@@ -229,7 +229,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          created_at: "2020-07-08T23:00:00.000Z",
+          created_at: "2020-07-09T00:00:00.000Z",
           votes: -10,
         });
       });
@@ -921,7 +921,7 @@ describe("/api/comments/:comment_id", () => {
           votes: 17,
           author: "butter_bridge",
           article_id: 9,
-          created_at: "2020-04-05T23:00:00.000Z",
+          created_at: "2020-04-06T00:00:00.000Z",
         });
       });
   });
@@ -941,7 +941,7 @@ describe("/api/comments/:comment_id", () => {
           votes: 15,
           author: "butter_bridge",
           article_id: 9,
-          created_at: "2020-04-05T23:00:00.000Z",
+          created_at: "2020-04-06T00:00:00.000Z",
         });
       });
   });
