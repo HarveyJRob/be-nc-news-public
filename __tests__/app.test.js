@@ -388,7 +388,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & array of article objects sorted by title DESC", () => {
     return request(app)
-      .get("/api/articles?sort_by=title&&order=DESC")
+      .get("/api/articles?sort_by=title&order=DESC")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -401,7 +401,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & array of article objects sorted by body DESC", () => {
     return request(app)
-      .get("/api/articles?sort_by=body&&order=DESC")
+      .get("/api/articles?sort_by=body&order=DESC")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -414,7 +414,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & array of article objects sorted by votes DESC", () => {
     return request(app)
-      .get("/api/articles?sort_by=votes&&order=DESC")
+      .get("/api/articles?sort_by=votes&order=DESC")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -427,7 +427,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & array of article objects sorted by topic DESC", () => {
     return request(app)
-      .get("/api/articles?sort_by=topic&&order=DESC")
+      .get("/api/articles?sort_by=topic&order=DESC")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -440,7 +440,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & array of article objects sorted by author DESC", () => {
     return request(app)
-      .get("/api/articles?sort_by=author&&order=DESC")
+      .get("/api/articles?sort_by=author&order=DESC")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -453,7 +453,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & array of article objects sorted by created_at DESC", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at&&order=DESC")
+      .get("/api/articles?sort_by=created_at&order=DESC")
       .expect(200)
       .then((res) => {
         expect(res.body.total_count).toBe(12);
@@ -564,7 +564,7 @@ describe("/api/articles", () => {
   });
   test("GET: status 200 & object with total_count, page, pageCount and post properties sorted by defaults (created_at DESC)", () => {
     return request(app)
-      .get("/api/articles?limit=5&&p=2")
+      .get("/api/articles?limit=5&p=2")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
@@ -757,7 +757,7 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("GET: status 200 & object with total_count, page, pageCount and post properties sorted by defaults (created_at DESC)", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=5&&p=2")
+      .get("/api/articles/1/comments?limit=5&p=2")
       .expect(200)
       .then((res) => {
         expect(res.body).toMatchObject({
