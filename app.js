@@ -2,6 +2,10 @@
 const express = require("express");
 const app = express();
 
+// Cors
+const cors = require("cors");
+app.use(cors());
+
 //Swagger
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
@@ -51,12 +55,7 @@ if (ENV === "dev") {
 }
 
 // Error-handling functions
-const {
-  handle404s,
-  handlePsqlErrors,
-  handleCustomErrors,
-  handleServerErrors,
-} = require("./utils/errors");
+const { handle404s, handlePsqlErrors, handleCustomErrors, handleServerErrors } = require("./utils/errors");
 
 // Routers
 const articlesRouter = require("./routers/articles.router");

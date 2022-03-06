@@ -6,6 +6,8 @@ SELECT * FROM topics;
 
 SELECT * FROM users;
 
+SELECT * FROM user_pwds;
+
 SELECT * FROM articles;
 
 SELECT * FROM comments;

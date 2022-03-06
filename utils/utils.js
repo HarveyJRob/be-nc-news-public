@@ -47,4 +47,41 @@ const addPagination = (resource, results, limit, p) => {
   return newResults;
 };
 
+//
+isValidReqQuery = () => {};
+
+//
+isValidReqBody = () => {};
+
+//
+isValidReqParams = () => {};
+
+// Pagination using offset
+const paginateUsingOffset = (total_count, limit = 10, p = 1) => {
+  let pageCount = 1;
+  if (total_count > 0) {
+    pageCount = Math.ceil(total_count / limit);
+  }
+  if (p > pageCount) {
+    p = pageCount;
+  }
+  let pagination = {
+    total_count: total_count,
+    page: p,
+    pageCount: pageCount,
+  };
+
+  const offset = p * limit - limit;
+
+  const limitQueryValues = [];
+  limitQueryValues.push(limit, offset);
+  const sqlLimitStr = " LIMIT %L OFFSET %L";
+
+  return {
+    limitQueryValues: limitQueryValues,
+    sqlLimitStr: sqlLimitStr,
+    pagination: pagination,
+  };
+};
+
 module.exports = { checkExists, checkTopic, addPagination };
