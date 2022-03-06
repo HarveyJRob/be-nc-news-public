@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 
-// Cors
+// cors
 const cors = require("cors");
 app.use(cors());
 
