@@ -1,26 +1,14 @@
 const db = require("../connection");
 const format = require("pg-format");
-const bcrypt = require("bcrypt");
-//const hashUserPwd = require("../../utils/utils");
 
 const seed = (data) => {
-  const { articleData, commentData, topicData, userData, userPwdData } = data;
-
-  const hashUserPwd = userPwdData.map((user) => {
-    return {
-      ...user,
-      password: bcrypt.hashSync(user.password, 10),
-    };
-  });
+  const { articleData, commentData, topicData, userData } = data;
 
   // Drop tables
   return db
     .query(`DROP TABLE IF EXISTS comments;`)
     .then((result) => {
       return db.query(`DROP TABLE IF EXISTS articles;`);
-    })
-    .then((result) => {
-      return db.query(`DROP TABLE IF EXISTS user_pwds;`);
     })
     .then((result) => {
       return db.query(`DROP TABLE IF EXISTS users;`);
@@ -41,13 +29,6 @@ const seed = (data) => {
         username VARCHAR(100) PRIMARY KEY,
         avatar_url VARCHAR(150) NOT NULL,
         name VARCHAR(100) NOT NULL
-      );`);
-    })
-    .then((result) => {
-      return db.query(`CREATE TABLE user_pwds (
-        username VARCHAR(100) REFERENCES users(username) NOT NULL,
-        password VARCHAR(100) NOT NULL,
-        created_at DATE DEFAULT Now() NOT NULL
       );`);
     })
     .then((result) => {
@@ -93,25 +74,9 @@ const seed = (data) => {
     })
     .then((result) => {
       const queryString = format(
-        `INSERT INTO user_pwds (username, password) VALUES %L RETURNING *;`,
-        hashUserPwd.map((user_pwd) => {
-          return [user_pwd.username, user_pwd.password];
-        })
-      );
-      return db.query(queryString);
-    })
-    .then((result) => {
-      const queryString = format(
         `INSERT INTO articles (title, body, topic, author, created_at, votes) VALUES %L RETURNING *;`,
         articleData.map((article) => {
-          return [
-            article.title,
-            article.body,
-            article.topic,
-            article.author,
-            article.created_at,
-            article.votes,
-          ];
+          return [article.title, article.body, article.topic, article.author, article.created_at, article.votes];
         })
       );
       return db.query(queryString);
@@ -120,13 +85,7 @@ const seed = (data) => {
       const queryString = format(
         `INSERT INTO comments (author, article_id, body, created_at, votes) VALUES %L RETURNING *;`,
         commentData.map((comment) => {
-          return [
-            comment.author,
-            comment.article_id,
-            comment.body,
-            comment.created_at,
-            comment.votes,
-          ];
+          return [comment.author, comment.article_id, comment.body, comment.created_at, comment.votes];
         })
       );
       return db.query(queryString);

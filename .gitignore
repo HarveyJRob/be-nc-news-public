@@ -1,8 +1,6 @@
 node_modules
 .env.*
 
-config.js
-
 /db/views/*.txt
 /db/views/query-tester.sql
 /docs/*
