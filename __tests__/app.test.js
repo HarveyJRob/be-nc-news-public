@@ -139,6 +139,68 @@ describe("/api/users/:username", () => {
   });
 });
 
+describe("/api/users/:username/articles", () => {
+  test("GET: status 200 & requested articles object", () => {
+    return request(app)
+      .get("/api/users/butter_bridge/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeInstanceOf(Array);
+        expect(res.body.articles).toHaveLength(3);
+        res.body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            body: expect.any(String),
+            votes: expect.any(Number),
+            topic: expect.any(String),
+            author: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET: status 404 & returns an error message", () => {
+    return request(app)
+      .get("/api/users/None_existent_username/articles")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not found");
+      });
+  });
+});
+
+describe("/api/users/:username/comments", () => {
+  test("GET: status 200 & requested comments object", () => {
+    return request(app)
+      .get("/api/users/butter_bridge/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toBeInstanceOf(Array);
+        expect(res.body.comments).toHaveLength(5);
+        res.body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            votes: expect.any(Number),
+            article_title: expect.any(String),
+            article_author: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET: status 404 & returns an error message", () => {
+    return request(app)
+      .get("/api/users/None_existent_username/comments")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not found");
+      });
+  });
+});
+
 describe("/api/articles/:article_id", () => {
   test("GET: status 200 & requested article object inc comment_count", () => {
     return request(app)

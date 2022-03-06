@@ -96,6 +96,21 @@ exports.insertArticle = (author, title, body, topic) => {
   });
 };
 
+exports.selectArticlesByUsername = (username) => {
+  let queryValues = [username];
+  let sqlStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+                FROM articles
+                LEFT OUTER JOIN comments ON articles.article_id = comments.article_id 
+                WHERE articles.author = %L
+                GROUP BY articles.article_id;`;
+
+  const queryStr = format(sqlStr, ...queryValues);
+
+  return db.query(queryStr).then((results) => {
+    return results.rows;
+  });
+};
+
 exports.selectArticleByArticleId = (article_id) => {
   let queryValues = [article_id];
   let sqlStr = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count

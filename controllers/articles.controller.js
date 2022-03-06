@@ -1,6 +1,7 @@
 const {
   selectArticles,
   insertArticle,
+  selectArticlesByUsername,
   selectArticleByArticleId,
   updateArticleByArticleId,
   removeArticleByArticleId,
@@ -38,6 +39,15 @@ exports.postArticle = (req, res, next) => {
   insertArticle(author, title, body, topic)
     .then((article) => {
       return res.status(201).send({ article });
+    })
+    .catch((err) => next(err));
+};
+
+exports.getArticlesByUsername = (req, res, next) => {
+  const { username } = req.params;
+  selectArticlesByUsername(username)
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch((err) => next(err));
 };

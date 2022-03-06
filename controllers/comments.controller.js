@@ -1,4 +1,8 @@
-const { removeCommentByCommentId, updateCommentByCommentId } = require("../models/comments.model");
+const {
+  selectCommentsByUsername,
+  removeCommentByCommentId,
+  updateCommentByCommentId,
+} = require("../models/comments.model");
 
 const { checkExists } = require("../utils/utils");
 
@@ -8,6 +12,15 @@ exports.checkCommentIdExists = function (req, res, next, id) {
       if (result === true) {
         next();
       }
+    })
+    .catch((err) => next(err));
+};
+
+exports.getCommentsByUsername = (req, res, next) => {
+  const { username } = req.params;
+  selectCommentsByUsername(username)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch((err) => next(err));
 };
