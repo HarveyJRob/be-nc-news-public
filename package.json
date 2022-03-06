@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^12.0.3",
     "express": "^4.17.2",
     "morgan": "^1.10.0",
