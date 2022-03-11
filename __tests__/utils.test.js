@@ -64,6 +64,19 @@ describe("addPagination", () => {
     addPagination("articles", results, limit, p);
     expect(results).toEqual([{ 1: 1 }, { 2: 2 }, { 3: 3 }]);
   });
+  test("empty array returns a new object with total_count, page, pageCount & post properties using default limit and p", () => {
+    const results = [];
+    const limit = 10;
+    const p = 1;
+    const returnValue = addPagination("articles", results, limit, p);
+    const expectedResult = {
+      total_count: 0,
+      page: 1,
+      pageCount: 1,
+      articles: [],
+    };
+    expect(returnValue).toEqual(expectedResult);
+  });
   test("single rows array returns a new object with total_count, page, pageCount & post properties using default limit and p", () => {
     const results = [1];
     const limit = 10;

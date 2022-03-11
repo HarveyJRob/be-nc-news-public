@@ -20,10 +20,7 @@ const checkTopic = (topic) => {
   const queryStr = format(sqlStr, ...queryValues);
 
   return db.query(queryStr).then((topics) => {
-    if (
-      topic &&
-      !topics.rows.find((element) => element.slug.toLowerCase() === topic.toLowerCase())
-    ) {
+    if (topic && !topics.rows.find((element) => element.slug.toLowerCase() === topic.toLowerCase())) {
       return Promise.reject({ status: 404, msg: "Not found" });
     } else {
       return topics.rows.map((element) => element.slug);
@@ -34,7 +31,11 @@ const checkTopic = (topic) => {
 const addPagination = (resource, results, limit, p) => {
   resultsCopy = JSON.parse(JSON.stringify(results));
 
-  const pageCount = Math.ceil(resultsCopy.length / limit);
+  let pageCount = 1;
+  if (resultsCopy.length > 0) {
+    pageCount = Math.ceil(resultsCopy.length / limit);
+  }
+
   let page = parseInt(p);
   if (page > pageCount) {
     page = pageCount;
