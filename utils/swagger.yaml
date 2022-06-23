@@ -16,8 +16,9 @@ info:
     # -url: "http://company.com/"
     # description: This is my company server
 
-schemes: [http, https]
+# schemes: [http, https]
 
+schemes: [https]
 paths:
   /api:
     get:
